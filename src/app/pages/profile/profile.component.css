@@ -1,0 +1,14 @@
+/* Shared styles for address list, profile card, and admin nav live in styles.css */
+.th-link-btn {
+  background: none;
+  border: none;
+  color: var(--th-navy);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.th-link-danger {
+  color: var(--th-danger);
+}

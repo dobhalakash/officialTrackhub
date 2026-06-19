@@ -1,0 +1,67 @@
+<div class="th-page-container th-payment-page">
+
+  @if (loading()) {
+    <p class="th-text-muted">Loading payment details...</p>
+  } @else if (error() && !info()) {
+    <div class="th-empty-state th-card">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <p>{{ error() }}</p>
+      <a [routerLink]="['/orders', orderId]" class="btn-th-outline">Back to Order</a>
+    </div>
+  } @else if (info()) {
+    <div class="th-card th-payment-card">
+
+      @if (paid()) {
+        <div class="th-payment-success">
+          <i class="fa-solid fa-circle-check"></i>
+          <h1>Payment Successful</h1>
+          <p class="th-text-muted">Your payment for order {{ info()!.orderNumber }} has been received.</p>
+          <button class="btn-th-primary" (click)="goToOrder()">View Order</button>
+        </div>
+      } @else {
+        <h1 class="th-payment-title">Pay with UPI</h1>
+        <p class="th-text-muted th-payment-subtitle">
+          Scan the QR code with PhonePe, Google Pay, or any UPI app - or tap "Pay Now" on your phone.
+        </p>
+
+        <div class="th-qr-wrap">
+          <canvas #qrCanvas></canvas>
+        </div>
+
+        <div class="th-payment-amount">
+          <span class="th-text-muted">Amount to pay</span>
+          <span class="th-price th-payment-amount-value">₹{{ info()!.amount | number:'1.0-0' }}</span>
+        </div>
+
+        <div class="th-payment-details">
+          <div class="th-payment-row">
+            <span class="th-text-muted">Pay to</span>
+            <span>{{ info()!.payeeName }} ({{ info()!.payeeUpiId }})</span>
+          </div>
+          <div class="th-payment-row">
+            <span class="th-text-muted">Reference</span>
+            <span>{{ info()!.orderNumber }}</span>
+          </div>
+        </div>
+
+        <a [href]="info()!.upiUri" class="btn-th-primary full-width th-upi-pay-btn">
+          <i class="fa-solid fa-mobile-screen-button"></i> Pay Now with UPI App
+        </a>
+        <p class="th-text-muted th-upi-note">
+          On a phone, this opens your UPI app automatically with the amount pre-filled.
+        </p>
+
+        @if (error()) {
+          <p class="th-error-text">{{ error() }}</p>
+        }
+
+        <button class="btn-th-outline full-width th-confirm-btn" [disabled]="confirming()" (click)="confirmPayment()">
+          @if (confirming()) { Confirming... } @else { I've Completed the Payment }
+        </button>
+
+        <a [routerLink]="['/orders', orderId]" class="th-payment-cancel">Pay later (order is saved)</a>
+      }
+    </div>
+  }
+
+</div>

@@ -1,0 +1,125 @@
+<!-- ══ TOP INFO BAR ══ -->
+<div class="dn-topbar">
+  <div class="dn-topbar__left">
+    <a href="tel:+919876543210" class="dn-topbar__link">
+      <i class="fa-solid fa-phone"></i> +91 98765 43210
+    </a>
+    <a href="mailto:support@trackhub.in" class="dn-topbar__link">
+      <i class="fa-regular fa-envelope"></i> support&#64;trackhub.in
+    </a>
+  </div>
+  <div class="dn-topbar__center">
+    <span class="dn-topbar__promo">
+      <i class="fa-solid fa-truck-fast"></i>
+      <strong>FREE SHIPPING</strong> on orders above ₹999 &nbsp;|&nbsp; 100-Night Trial Available
+    </span>
+  </div>
+  <div class="dn-topbar__right">
+    <a routerLink="/orders" class="dn-topbar__link">Track Order</a>
+    <span class="dn-topbar__divider"></span>
+    <a routerLink="/contact" class="dn-topbar__link">Store Locator</a>
+    <span class="dn-topbar__divider"></span>
+    <a routerLink="/contact" class="dn-topbar__link">Help &amp; Support</a>
+  </div>
+</div>
+
+<!-- ══ MAIN NAVBAR ══ -->
+<header class="dn-navbar" [class.th-navbar-scrolled]="scrolled()">
+  <div class="dn-navbar__inner dn-container">
+
+    <!-- Logo -->
+    <a routerLink="/" class="dn-brand" (click)="closeMenu()">
+  <div class="dn-brand__icon">
+    <img src="assets/Track Hub Logo.png" alt="Track Hub Logo" class="dn-logo">
+  </div>
+
+  <div class="dn-brand__text">
+    <span class="dn-brand__name">Track<strong>Hub</strong></span>
+    <span class="dn-brand__tagline">Wear Better. Live Better.</span>
+  </div>
+</a>
+
+    <!-- Search bar -->
+    <div class="dn-search">
+      <div class="dn-search__category">
+        <select aria-label="Search category">
+          <option color="text-muted">ALL CATEGORIES</option>
+          <option>Sports Jerseys</option>
+          <option>Cricket Jerseys</option>
+          <option>Football Jerseys</option>
+          <option>Custom Team Jerseys</option>
+          <option>School & College Uniforms</option>
+          <option>Corporate Team Wear</option>
+        </select>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+      <input
+        type="text"
+        class="dn-search__input"
+        placeholder="Search for Jerseys, brands and more"
+        aria-label="Search products"
+        (keydown.enter)="onSearch($event)"
+      />
+      <button class="dn-search__btn" aria-label="Search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </div>
+
+    <!-- Right icons -->
+    <div class="dn-navbar__actions">
+      @if (authService.isLoggedIn()) {
+        <a routerLink="/wishlist" class="dn-action-link" title="Wishlist">
+          <i class="fa-regular fa-heart"></i>
+          <span class="dn-action-label">Wishlist</span>
+          <span class="dn-action-badge">0</span>
+        </a> <!-- Logout button directly visible -->
+    <button (click)="logout()" class="dn-action-link dn-logout-btn" title="Logout">
+      <i class="fa-solid fa-sign-out-alt"></i>
+      <span class="dn-action-label">Logout</span>
+    </button>
+  
+      }
+
+      <a [routerLink]="authService.isLoggedIn() ? dashboardLink : '/login'" class="dn-action-link" title="Account">
+        <i class="fa-regular fa-user"></i>
+        <span class="dn-action-label">
+          @if (authService.isLoggedIn()) { Account } @else { Sign In }
+        </span>
+      </a>
+
+      <a routerLink="/cart" class="dn-action-link dn-action-cart" title="Cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="dn-action-label">Cart</span>
+        @if (cartService.cart().totalItems > 0) {
+          <span class="dn-action-badge dn-action-badge--cart">{{ cartService.cart().totalItems }}</span>
+        }
+      </a>
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button class="dn-burger" (click)="toggleMenu()" [class.open]="menuOpen()" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- ── CATEGORY NAV ROW ── -->
+  <nav class="dn-catnav" aria-label="Category navigation">
+    <div class="dn-catnav__inner dn-container">
+      <button class="dn-catnav__all">
+        <i class="fa-solid fa-bars"></i> Premium Categories <i class="fa-solid "></i>
+      </button>
+      <ul class="dn-catnav__links" [class.open]="menuOpen()">
+        <li *ngFor="let link of navLinks">
+          <a [routerLink]="link.path" [queryParams]="link.params" routerLinkActive="active"
+             [routerLinkActiveOptions]="{ exact: link.path === '/' }"
+             (click)="closeMenu()">{{ link.label }}</a>
+        </li>
+        <li class="dn-catnav__offers">
+          <a routerLink="/products" [queryParams]="{ sortBy: 'trending' }" (click)="closeMenu()">
+            <i class="fa-solid fa-bolt"></i> Offers
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>

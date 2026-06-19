@@ -1,0 +1,81 @@
+<div class="th-auth-page">
+  <div class="th-card th-auth-card th-auth-card-wide">
+    <div class="th-auth-header">
+      <img
+      src="assets/Track Hub Logo.png"
+      alt="Track Hub Logo"
+      class="th-auth-logo">
+      <h1>Register Your Business</h1>
+      <p class="th-text-muted">Join Track Hub and start selling premium sports jerseys,
+      team uniforms, custom kits, activewear and athletic apparel.
+      Your application will be reviewed by our team before activation.</p>
+    </div>
+
+    @if (success()) {
+      <div class="th-success-box">
+        <i class="fa-solid fa-circle-check"></i>
+        <p>Your business account has been created and is pending approval. Redirecting to your dashboard...</p>
+      </div>
+    } @else {
+      <form (ngSubmit)="submit()" #regForm="ngForm">
+        <div class="th-form-row">
+          <div class="th-form-group">
+            <label>Business Name</label>
+            <input type="text" name="businessName" class="form-control" required
+                   [(ngModel)]="form.businessName" placeholder="e.g. Champion Sports Co.">
+          </div>
+          <div class="th-form-group">
+            <label>Owner Name</label>
+            <input type="text" name="ownerName" class="form-control" required
+                   [(ngModel)]="form.ownerName" placeholder="Full name">
+          </div>
+        </div>
+
+        <div class="th-form-row">
+          <div class="th-form-group">
+            <label>GST Number</label>
+            <input type="text" name="gstNumber" class="form-control" required
+                   [(ngModel)]="form.gstNumber" placeholder="22AAAAA0000A1Z5">
+          </div>
+          <div class="th-form-group">
+            <label>Mobile Number</label>
+            <input type="tel" name="mobile" class="form-control" required pattern="[0-9]{10}"
+                   [(ngModel)]="form.mobile" placeholder="10-digit mobile number">
+          </div>
+        </div>
+
+        <div class="th-form-group">
+          <label>Email</label>
+          <input type="email" name="email" class="form-control" required
+                 [(ngModel)]="form.email" placeholder="business@example.com">
+        </div>
+
+        <div class="th-form-row">
+          <div class="th-form-group">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" required minlength="6"
+                   [(ngModel)]="form.password" placeholder="At least 6 characters">
+          </div>
+          <div class="th-form-group">
+            <label>Confirm Password</label>
+            <input type="password" name="confirmPassword" class="form-control" required
+                   [(ngModel)]="confirmPassword" placeholder="Re-enter password">
+          </div>
+        </div>
+
+        @if (error()) {
+          <p class="th-error-text">{{ error() }}</p>
+        }
+
+        <button type="submit" class="btn-th-primary full-width" [disabled]="loading() || !regForm.valid">
+          @if (loading()) { Submitting... } @else { Submit for Approval }
+        </button>
+      </form>
+
+      <div class="th-auth-footer">
+        <p>Already have an account? <a routerLink="/login">Login</a></p>
+        <p>Looking to shop instead? <a routerLink="/register">Create a customer account</a></p>
+      </div>
+    }
+  </div>
+</div>

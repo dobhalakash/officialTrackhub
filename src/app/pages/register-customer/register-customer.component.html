@@ -1,0 +1,65 @@
+<div class="th-auth-page">
+  <div class="th-card th-auth-card">
+    <div class="th-auth-header">
+      <img
+      src="assets/Track Hub Logo.png"
+      alt="Track Hub Logo"
+      class="th-auth-logo">
+      <h1>Create Your Account</h1>
+      <p class="th-text-muted">Join Trackhub to shop and track your orders</p>
+    </div>
+
+    <form (ngSubmit)="submit()" #regForm="ngForm">
+      <div class="th-form-row">
+        <div class="th-form-group">
+          <label>First Name</label>
+          <input type="text" name="firstName" class="form-control" required
+                 [(ngModel)]="form.firstName" placeholder="John">
+        </div>
+        <div class="th-form-group">
+          <label>Last Name</label>
+          <input type="text" name="lastName" class="form-control"
+                 [(ngModel)]="form.lastName" placeholder="Doe">
+        </div>
+      </div>
+
+      <div class="th-form-group">
+        <label>Email</label>
+        <input type="email" name="email" class="form-control" required
+               [(ngModel)]="form.email" placeholder="you@example.com">
+      </div>
+
+      <div class="th-form-group">
+        <label>Mobile Number</label>
+        <input type="tel" name="mobileNumber" class="form-control" required pattern="[0-9]{10}"
+               [(ngModel)]="form.mobileNumber" placeholder="10-digit mobile number">
+      </div>
+
+      <div class="th-form-row">
+        <div class="th-form-group">
+          <label>Password</label>
+          <input type="password" name="password" class="form-control" required minlength="6"
+                 [(ngModel)]="form.password" placeholder="At least 6 characters">
+        </div>
+        <div class="th-form-group">
+          <label>Confirm Password</label>
+          <input type="password" name="confirmPassword" class="form-control" required
+                 [(ngModel)]="form.confirmPassword" placeholder="Re-enter password">
+        </div>
+      </div>
+
+      @if (error()) {
+        <p class="th-error-text">{{ error() }}</p>
+      }
+
+      <button type="submit" class="btn-th-primary full-width" [disabled]="loading() || !regForm.valid">
+        @if (loading()) { Creating account... } @else { Create Account }
+      </button>
+    </form>
+
+    <div class="th-auth-footer">
+      <p>Already have an account? <a routerLink="/login">Login</a></p>
+      <p>Want to sell on Trackhub? <a routerLink="/register/business">Register your business</a></p>
+    </div>
+  </div>
+</div>

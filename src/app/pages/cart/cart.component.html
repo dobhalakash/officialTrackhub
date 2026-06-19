@@ -1,0 +1,73 @@
+<div class="th-page-container">
+  <h1 class="th-section-title">Shopping Cart</h1>
+
+  @if (cartService.cart().items.length === 0) {
+    <div class="th-empty-state th-card">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <p>Your cart is empty.</p>
+      <a routerLink="/products" class="btn-th-primary">Start Shopping</a>
+    </div>
+  } @else {
+    <div class="th-cart-layout">
+      <div class="th-cart-items">
+        @for (item of activeItems(); track item.id) {
+          <div class="th-card th-cart-item">
+            <img [src]="item.productImageUrl || 'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?w=200'" [alt]="item.productName">
+            <div class="th-cart-item-info">
+              <div class="th-cart-item-name">{{ item.productName }}</div>
+              @if (item.size) {
+                <div class="th-text-muted th-cart-item-size">Size: {{ item.size }}</div>
+              }
+              <div class="th-price">₹{{ item.priceAtAdd | number:'1.0-0' }}</div>
+
+              @if (item.availableStock !== null && item.quantity > item.availableStock) {
+                <p class="th-out-of-stock-text">Only {{ item.availableStock }} left in stock</p>
+              }
+            </div>
+            <div class="th-cart-item-actions">
+              <div class="th-qty-control">
+                <button (click)="decrement(item)">-</button>
+                <span>{{ item.quantity }}</span>
+                <button (click)="increment(item)">+</button>
+              </div>
+              <div class="th-cart-item-total th-price">₹{{ item.lineTotal | number:'1.0-0' }}</div>
+              <div class="th-cart-item-links">
+                <button class="th-link-btn" (click)="saveForLater(item)">Save for later</button>
+                <button class="th-link-btn th-link-danger" (click)="removeItem(item)">Remove</button>
+              </div>
+            </div>
+          </div>
+        }
+
+        @if (savedItems().length > 0) {
+          <h2 class="th-section-title th-saved-title">Saved for Later</h2>
+          @for (item of savedItems(); track item.id) {
+            <div class="th-card th-cart-item th-saved-item">
+              <img [src]="item.productImageUrl || 'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?w=200'" [alt]="item.productName">
+              <div class="th-cart-item-info">
+                <div class="th-cart-item-name">{{ item.productName }}</div>
+                <div class="th-price">₹{{ item.priceAtAdd | number:'1.0-0' }}</div>
+              </div>
+              <div class="th-cart-item-links">
+                <button class="th-link-btn" (click)="moveToCart(item)">Move to cart</button>
+                <button class="th-link-btn th-link-danger" (click)="removeItem(item)">Remove</button>
+              </div>
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Summary -->
+      <div class="th-card th-cart-summary">
+        <h6>Order Summary</h6>
+        <div class="th-summary-row">
+          <span>Subtotal ({{ cartService.cart().totalItems }} items)</span>
+          <span>₹{{ cartService.cart().subtotal | number:'1.0-0' }}</span>
+        </div>
+        <p class="th-text-muted th-summary-note">Taxes and shipping calculated at checkout.</p>
+        <button class="btn-th-primary full-width" (click)="proceedToCheckout()">Proceed to Checkout</button>
+        <a routerLink="/products" class="th-continue-shopping">Continue Shopping</a>
+      </div>
+    </div>
+  }
+</div>

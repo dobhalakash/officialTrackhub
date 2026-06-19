@@ -1,0 +1,16 @@
+/* Page-specific overrides for the login page (shared auth styles live in styles.css) */
+.th-auth-header{
+  text-align:center;
+}
+
+.th-auth-logo{
+  width:90px;
+  height:auto;
+  margin-bottom:16px;
+align-self:center;
+  transition:transform .4s ease;
+}
+
+.th-auth-logo:hover{
+  transform:rotate(360deg);
+}

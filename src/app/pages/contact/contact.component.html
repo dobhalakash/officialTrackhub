@@ -1,0 +1,69 @@
+<div class="th-page-container">
+  <h1 class="th-section-title">Contact Us</h1>
+
+  <div class="th-contact-layout">
+    <div class="th-card th-contact-form-card">
+      <h6>Send us a message</h6>
+
+      @if (submitted()) {
+        <div class="th-success-box">
+          <i class="fa-solid fa-circle-check"></i>
+          <p>Thanks for reaching out! Our team will get back to you within 24 hours.</p>
+        </div>
+      } @else {
+        <form (ngSubmit)="submit()" #contactForm="ngForm">
+          <div class="th-form-row">
+            <div class="th-form-group">
+              <label>Name</label>
+              <input type="text" name="name" class="form-control" required [(ngModel)]="form.name">
+            </div>
+            <div class="th-form-group">
+              <label>Email</label>
+              <input type="email" name="email" class="form-control" required [(ngModel)]="form.email">
+            </div>
+          </div>
+          <div class="th-form-group">
+            <label>Subject</label>
+            <input type="text" name="subject" class="form-control" required [(ngModel)]="form.subject">
+          </div>
+          <div class="th-form-group">
+            <label>Message</label>
+            <textarea name="message" class="form-control" rows="5" required [(ngModel)]="form.message"></textarea>
+          </div>
+          <button type="submit" class="btn-th-primary" [disabled]="!contactForm.valid">Send Message</button>
+        </form>
+      }
+    </div>
+
+    <div class="th-contact-info">
+      <div class="th-card th-contact-info-card">
+        <i class="fa-solid fa-location-dot"></i>
+        <h6>Visit Us</h6>
+        <p class="th-text-muted">DreamNest HQ, 4th Floor, Comfort Plaza, Mumbai, Maharashtra 400001</p>
+      </div>
+      <div class="th-card th-contact-info-card">
+        <i class="fa-solid fa-phone"></i>
+        <h6>Call Us</h6>
+        <p class="th-text-muted">+91 98765 43210 (Mon-Sat, 9 AM - 7 PM)</p>
+      </div>
+      <div class="th-card th-contact-info-card">
+        <i class="fa-solid fa-envelope"></i>
+        <h6>Email Us</h6>
+        <p class="th-text-muted">support&#64;dreamnest.example</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQs -->
+  <section class="th-section">
+    <h2 class="th-section-title">Frequently Asked Questions</h2>
+    <div class="th-faq-list">
+      @for (faq of faqs; track faq.question) {
+        <div class="th-card th-faq-item">
+          <h6>{{ faq.question }}</h6>
+          <p class="th-text-muted">{{ faq.answer }}</p>
+        </div>
+      }
+    </div>
+  </section>
+</div>

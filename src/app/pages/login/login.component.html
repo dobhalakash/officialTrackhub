@@ -1,0 +1,43 @@
+<div class="th-auth-page">
+  <div class="th-card th-auth-card">
+  <div class="th-auth-header">
+
+    <img
+      src="assets/Track Hub Logo.png"
+      alt="Track Hub Logo"
+      class="th-auth-logo">
+
+    <h1>Welcome Back</h1>
+    <p class="th-text-muted">Login to your TrackHub account</p>
+
+  </div>
+
+
+    <form (ngSubmit)="submit()" #loginForm="ngForm">
+      <div class="th-form-group">
+        <label>Email</label>
+        <input type="email" name="email" class="form-control" required
+               [(ngModel)]="form.email" placeholder="you@example.com">
+      </div>
+
+      <div class="th-form-group">
+        <label>Password</label>
+        <input type="password" name="password" class="form-control" required
+               [(ngModel)]="form.password" placeholder="••••••••">
+      </div>
+
+      @if (error()) {
+        <p class="th-error-text">{{ error() }}</p>
+      }
+
+      <button type="submit" class="btn-th-primary full-width" [disabled]="loading() || !loginForm.valid">
+        @if (loading()) { Logging in... } @else { Login }
+      </button>
+    </form>
+
+    <div class="th-auth-footer">
+      <p>Don't have an account? <a routerLink="/register">Sign up as Customer</a></p>
+      <p>Want to sell on Trackhub? <a routerLink="/register/business">Register your business</a></p>
+    </div>
+  </div>
+</div>

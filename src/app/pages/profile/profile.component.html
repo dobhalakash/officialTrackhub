@@ -1,0 +1,157 @@
+<div class="th-page-container">
+  <h1 class="th-section-title">My Account</h1>
+
+  <div class="th-admin-page">
+    <aside class="th-admin-sidebar">
+      <nav class="th-admin-nav">
+        <a [class.active]="activeTab() === 'profile'" (click)="activeTab.set('profile')">
+          <i class="fa-regular fa-user"></i> Profile
+        </a>
+        <a [class.active]="activeTab() === 'addresses'" (click)="activeTab.set('addresses')">
+          <i class="fa-solid fa-location-dot"></i> Addresses
+        </a>
+        <a [class.active]="activeTab() === 'password'" (click)="activeTab.set('password')">
+          <i class="fa-solid fa-lock"></i> Password
+        </a>
+        <a routerLink="/orders">
+          <i class="fa-solid fa-box"></i> My Orders
+        </a>
+      </nav>
+    </aside>
+
+    <div class="th-admin-content">
+      @if (error()) {
+        <p class="th-error-text">{{ error() }}</p>
+      }
+
+      @if (activeTab() === 'profile') {
+        <div class="th-card th-profile-card">
+          <h6>Profile Information</h6>
+          <div class="th-form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" [value]="authService.currentUser()?.email" disabled>
+          </div>
+          <div class="th-form-row">
+            <div class="th-form-group">
+              <label>First Name</label>
+              <input type="text" class="form-control" [(ngModel)]="profileForm.firstName">
+            </div>
+            <div class="th-form-group">
+              <label>Last Name</label>
+              <input type="text" class="form-control" [(ngModel)]="profileForm.lastName">
+            </div>
+          </div>
+          <div class="th-form-group">
+            <label>Mobile Number</label>
+            <input type="tel" class="form-control" [(ngModel)]="profileForm.mobileNumber">
+          </div>
+          @if (profileSaved()) {
+            <p class="th-success-text">Profile updated successfully!</p>
+          }
+          <button class="btn-th-primary" (click)="saveProfile()">Save Changes</button>
+        </div>
+      }
+
+      @if (activeTab() === 'addresses') {
+        <div class="th-card th-profile-card">
+          <h6>Saved Addresses</h6>
+          @if (addresses().length === 0) {
+            <p class="th-text-muted">You have no saved addresses yet.</p>
+          }
+          <div class="th-address-list">
+            @for (addr of addresses(); track addr.id) {
+              <div class="th-address-option th-address-display">
+                <div>
+                  <strong>{{ addr.fullName }}</strong> &middot; {{ addr.phone }}
+                  @if (addr.default) { <span class="th-default-tag">Default</span> }
+                  <p>{{ addr.addressLine1 }}, {{ addr.addressLine2 }}, {{ addr.city }}, {{ addr.state }} - {{ addr.pincode }}</p>
+                  <span class="th-address-type">{{ addr.addressType }}</span>
+                </div>
+                <button class="th-link-btn th-link-danger" (click)="deleteAddress(addr)">Remove</button>
+              </div>
+            }
+          </div>
+
+          @if (showAddressForm()) {
+            <div class="th-new-address-form">
+              <div class="th-form-row">
+                <div class="th-form-group">
+                  <label>Full Name</label>
+                  <input type="text" class="form-control" [(ngModel)]="newAddress.fullName">
+                </div>
+                <div class="th-form-group">
+                  <label>Phone</label>
+                  <input type="tel" class="form-control" [(ngModel)]="newAddress.phone">
+                </div>
+              </div>
+              <div class="th-form-group">
+                <label>Address Line 1</label>
+                <input type="text" class="form-control" [(ngModel)]="newAddress.addressLine1">
+              </div>
+              <div class="th-form-group">
+                <label>Address Line 2</label>
+                <input type="text" class="form-control" [(ngModel)]="newAddress.addressLine2">
+              </div>
+              <div class="th-form-row">
+                <div class="th-form-group">
+                  <label>City</label>
+                  <input type="text" class="form-control" [(ngModel)]="newAddress.city">
+                </div>
+                <div class="th-form-group">
+                  <label>State</label>
+                  <input type="text" class="form-control" [(ngModel)]="newAddress.state">
+                </div>
+              </div>
+              <div class="th-form-row">
+                <div class="th-form-group">
+                  <label>Pincode</label>
+                  <input type="text" class="form-control" [(ngModel)]="newAddress.pincode">
+                </div>
+                <div class="th-form-group">
+                  <label>Address Type</label>
+                  <select class="form-select" [(ngModel)]="newAddress.addressType">
+                    <option value="HOME">Home</option>
+                    <option value="WORK">Work</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="th-form-group">
+                <label class="th-checkbox-label">
+                  <input type="checkbox" [(ngModel)]="newAddress.isDefault"> Set as default address
+                </label>
+              </div>
+              <button class="btn-th-primary" (click)="saveAddress()">Save Address</button>
+            </div>
+          } @else {
+            <button class="btn-th-outline mt-2" (click)="showAddressForm.set(true)">+ Add New Address</button>
+          }
+        </div>
+      }
+
+      @if (activeTab() === 'password') {
+        <div class="th-card th-profile-card">
+          <h6>Change Password</h6>
+          <div class="th-form-group">
+            <label>Current Password</label>
+            <input type="password" class="form-control" [(ngModel)]="passwordForm.currentPassword">
+          </div>
+          <div class="th-form-row">
+            <div class="th-form-group">
+              <label>New Password</label>
+              <input type="password" class="form-control" [(ngModel)]="passwordForm.newPassword">
+            </div>
+            <div class="th-form-group">
+              <label>Confirm New Password</label>
+              <input type="password" class="form-control" [(ngModel)]="confirmNewPassword">
+            </div>
+          </div>
+          @if (passwordSaved()) {
+            <p class="th-success-text">Password changed successfully!</p>
+          }
+          <button class="btn-th-primary" (click)="changePassword()">Update Password</button>
+        </div>
+      }
+    </div>
+  </div>
+</div>

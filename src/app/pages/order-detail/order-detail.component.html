@@ -1,0 +1,107 @@
+@if (loading()) {
+  <div class="th-page-container">
+    <p class="th-text-muted">Loading order...</p>
+  </div>
+} @else if (!order()) {
+  <div class="th-page-container">
+    <div class="th-empty-state th-card">
+      <p>Order not found.</p>
+      <a routerLink="/orders" class="btn-th-outline">Back to Orders</a>
+    </div>
+  </div>
+} @else {
+  <div class="th-page-container">
+    <div class="th-od-header">
+      <div>
+        <h1 class="th-section-title th-od-title">Order {{ order()!.orderNumber }}</h1>
+        <p class="th-text-muted">Placed on {{ order()!.createdAt | date:'medium' }}</p>
+      </div>
+      <span class="th-status-badge" [ngClass]="statusClass(order()!.status)">{{ order()!.status }}</span>
+    </div>
+
+    <!-- Status tracker -->
+    @if (order()!.status !== 'CANCELLED') {
+      <div class="th-card th-tracker">
+        @for (step of statusSteps; track step) {
+          <div class="th-tracker-step" [class.done]="isStepDone(step)">
+            <div class="th-tracker-dot"></div>
+            <div class="th-tracker-label">{{ step.replace('_', ' ') }}</div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="th-card th-cancelled-banner">
+        <i class="fa-solid fa-circle-xmark"></i> This order has been cancelled.
+      </div>
+    }
+
+    <div class="th-od-layout">
+      <!-- Items -->
+      <div class="th-card th-od-section">
+        <h6>Items</h6>
+        @for (item of order()!.items; track item.id) {
+          <div class="th-od-item">
+            <img [src]="item.productImageUrl || 'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?w=100'" [alt]="item.productName">
+            <div class="th-od-item-info">
+              <div>{{ item.productName }}</div>
+              @if (item.size) { <span class="th-text-muted">Size: {{ item.size }} &middot; </span> }
+              <span class="th-text-muted">Qty: {{ item.quantity }} &times; ₹{{ item.unitPrice | number:'1.0-0' }}</span>
+            </div>
+            <div class="th-price">₹{{ item.totalPrice | number:'1.0-0' }}</div>
+          </div>
+        }
+      </div>
+
+      <!-- Summary & address -->
+      <div>
+        <div class="th-card th-od-section">
+          <h6>Order Summary</h6>
+          <div class="th-summary-row">
+            <span>Subtotal</span>
+            <span>₹{{ order()!.subtotal | number:'1.0-0' }}</span>
+          </div>
+          @if (order()!.discountAmount > 0) {
+            <div class="th-summary-row th-summary-discount">
+              <span>Discount</span>
+              <span>-₹{{ order()!.discountAmount | number:'1.0-0' }}</span>
+            </div>
+          }
+          <div class="th-summary-row">
+            <span>Tax</span>
+            <span>₹{{ order()!.taxAmount | number:'1.0-0' }}</span>
+          </div>
+          <div class="th-summary-row">
+            <span>Shipping</span>
+            <span>{{ order()!.shippingAmount === 0 ? 'Free' : '₹' + (order()!.shippingAmount | number:'1.0-0') }}</span>
+          </div>
+          <div class="th-summary-row th-summary-total">
+            <span>Total</span>
+            <span>₹{{ order()!.grandTotal | number:'1.0-0' }}</span>
+          </div>
+          <div class="th-payment-info">
+            <span class="th-text-muted">Payment Method:</span> {{ order()!.paymentMethod }}
+            <br>
+            <span class="th-text-muted">Payment Status:</span> {{ order()!.paymentStatus }}
+          </div>
+          @if (order()!.paymentMethod === 'UPI' && order()!.paymentStatus === 'PENDING') {
+            <a [routerLink]="['/orders', order()!.id, 'pay']" class="btn-th-primary full-width th-complete-payment-btn">
+              <i class="fa-solid fa-qrcode"></i> Complete Payment
+            </a>
+          }
+        </div>
+
+        <div class="th-card th-od-section">
+          <h6>Shipping Address</h6>
+          <p class="th-od-address">
+            <strong>{{ order()!.address.fullName }}</strong><br>
+            {{ order()!.address.addressLine1 }}<br>
+            @if (order()!.address.addressLine2) { {{ order()!.address.addressLine2 }}<br> }
+            {{ order()!.address.city }}, {{ order()!.address.state }} - {{ order()!.address.pincode }}<br>
+            {{ order()!.address.country }}<br>
+            Phone: {{ order()!.address.phone }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+}

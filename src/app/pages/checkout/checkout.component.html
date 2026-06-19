@@ -1,0 +1,180 @@
+<div class="th-page-container">
+  <h1 class="th-section-title">Checkout</h1>
+
+  <div class="th-checkout-layout">
+    <div class="th-checkout-main">
+
+      <!-- Address -->
+      <div class="th-card th-checkout-section">
+        <h6>Shipping Address</h6>
+
+        @if (addresses().length > 0) {
+          <div class="th-address-list">
+            @for (addr of addresses(); track addr.id) {
+              <label class="th-address-option" [class.selected]="selectedAddressId() === addr.id">
+                <input type="radio" name="address" [checked]="selectedAddressId() === addr.id" (change)="selectAddress(addr.id)">
+                <div>
+                  <strong>{{ addr.fullName }}</strong> &middot; {{ addr.phone }}
+                  <p>{{ addr.addressLine1 }}, {{ addr.addressLine2 }}, {{ addr.city }}, {{ addr.state }} - {{ addr.pincode }}</p>
+                  <span class="th-address-type">{{ addr.addressType }}</span>
+                </div>
+              </label>
+            }
+          </div>
+          <button class="th-link-btn" (click)="showAddressForm.set(!showAddressForm())">
+            {{ showAddressForm() ? 'Cancel' : '+ Add a new address' }}
+          </button>
+        }
+
+        @if (showAddressForm() || addresses().length === 0) {
+          <div class="th-new-address-form">
+            <div class="th-form-row">
+              <div class="th-form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control" [(ngModel)]="newAddress.fullName">
+              </div>
+              <div class="th-form-group">
+                <label>Phone</label>
+                <input type="tel" class="form-control" [(ngModel)]="newAddress.phone">
+              </div>
+            </div>
+            <div class="th-form-group">
+              <label>Address Line 1</label>
+              <input type="text" class="form-control" [(ngModel)]="newAddress.addressLine1">
+            </div>
+            <div class="th-form-group">
+              <label>Address Line 2</label>
+              <input type="text" class="form-control" [(ngModel)]="newAddress.addressLine2">
+            </div>
+            <div class="th-form-row">
+              <div class="th-form-group">
+                <label>City</label>
+                <input type="text" class="form-control" [(ngModel)]="newAddress.city">
+              </div>
+              <div class="th-form-group">
+                <label>State</label>
+                <input type="text" class="form-control" [(ngModel)]="newAddress.state">
+              </div>
+            </div>
+            <div class="th-form-row">
+              <div class="th-form-group">
+                <label>Pincode</label>
+                <input type="text" class="form-control" [(ngModel)]="newAddress.pincode">
+              </div>
+              <div class="th-form-group">
+                <label>Address Type</label>
+                <select class="form-select" [(ngModel)]="newAddress.addressType">
+                  <option value="HOME">Home</option>
+                  <option value="WORK">Work</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn-th-outline" (click)="saveNewAddress()">Save Address</button>
+          </div>
+        }
+      </div>
+
+      <!-- Payment method -->
+      <div class="th-card th-checkout-section">
+        <h6>Payment Method</h6>
+        <div class="th-payment-options">
+          <label class="th-payment-option" [class.selected]="paymentMethod === 'COD'">
+            <input type="radio" name="payment" value="COD" [(ngModel)]="paymentMethod">
+            <i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery
+          </label>
+          <label class="th-payment-option" [class.selected]="paymentMethod === 'UPI'">
+            <input type="radio" name="payment" value="UPI" [(ngModel)]="paymentMethod">
+            <i class="fa-solid fa-mobile-screen"></i> UPI
+          </label>
+          <label class="th-payment-option" [class.selected]="paymentMethod === 'CARD'">
+            <input type="radio" name="payment" value="CARD" [(ngModel)]="paymentMethod">
+            <i class="fa-regular fa-credit-card"></i> Credit / Debit Card
+          </label>
+          <label class="th-payment-option" [class.selected]="paymentMethod === 'NET_BANKING'">
+            <input type="radio" name="payment" value="NET_BANKING" [(ngModel)]="paymentMethod">
+            <i class="fa-solid fa-building-columns"></i> Net Banking
+          </label>
+        </div>
+        @if (paymentMethod !== 'COD') {
+          <p class="th-text-muted th-mock-note">
+            <i class="fa-solid fa-circle-info"></i> This is a demo checkout - no real payment will be processed.
+          </p>
+        }
+      </div>
+
+      <!-- Order items -->
+      <div class="th-card th-checkout-section">
+        <h6>Order Items</h6>
+        @for (item of cartService.cart().items; track item.id) {
+          @if (!item.savedForLater) {
+            <div class="th-checkout-item">
+              <img [src]="item.productImageUrl || 'https://images.unsplash.com/photo-1521577352947-9bb58764b69a?w=100'" [alt]="item.productName">
+              <div class="th-checkout-item-info">
+                <div>{{ item.productName }}</div>
+                @if (item.size) { <span class="th-text-muted">Size: {{ item.size }} &middot; </span> }
+                <span class="th-text-muted">Qty: {{ item.quantity }}</span>
+              </div>
+              <div class="th-price">₹{{ item.lineTotal | number:'1.0-0' }}</div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="th-card th-checkout-summary">
+      <h6>Order Summary</h6>
+
+      <div class="th-coupon-row">
+        @if (appliedCoupon()) {
+          <div class="th-applied-coupon">
+            <span><i class="fa-solid fa-tag"></i> {{ appliedCoupon()!.code }}</span>
+            <button class="th-link-btn th-link-danger" (click)="removeCoupon()">Remove</button>
+          </div>
+        } @else {
+          <div class="th-coupon-input">
+            <input type="text" class="form-control" placeholder="Coupon code"
+                   [value]="couponCode()" (input)="couponCode.set($any($event.target).value.toUpperCase())">
+            <button class="btn-th-outline" (click)="applyCoupon()">Apply</button>
+          </div>
+          @if (couponError()) {
+            <p class="th-error-text">{{ couponError() }}</p>
+          }
+        }
+      </div>
+
+      <div class="th-summary-row">
+        <span>Subtotal</span>
+        <span>₹{{ cartService.cart().subtotal | number:'1.0-0' }}</span>
+      </div>
+      @if (estimatedDiscount > 0) {
+        <div class="th-summary-row th-summary-discount">
+          <span>Discount</span>
+          <span>-₹{{ estimatedDiscount | number:'1.0-0' }}</span>
+        </div>
+      }
+      <div class="th-summary-row">
+        <span>Tax (5%)</span>
+        <span>₹{{ estimatedTax | number:'1.0-0' }}</span>
+      </div>
+      <div class="th-summary-row">
+        <span>Shipping</span>
+        <span>{{ estimatedShipping === 0 ? 'Free' : '₹' + (estimatedShipping | number:'1.0-0') }}</span>
+      </div>
+      <div class="th-summary-row th-summary-total">
+        <span>Total</span>
+        <span>₹{{ estimatedTotal | number:'1.0-0' }}</span>
+      </div>
+
+      @if (error()) {
+        <p class="th-error-text">{{ error() }}</p>
+      }
+
+      <button class="btn-th-primary full-width" [disabled]="placing()" (click)="placeOrder()">
+        @if (placing()) { Placing Order... } @else { Place Order }
+      </button>
+      <a routerLink="/cart" class="th-continue-shopping">Back to Cart</a>
+    </div>
+  </div>
+</div>

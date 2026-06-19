@@ -1,0 +1,22 @@
+.th-success-box {
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.th-success-box i {
+  font-size: 2.5rem;
+  color: var(--th-green);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.th-success-box p {
+  color: var(--th-text-muted);
+}
+.th-auth-logo{
+  width:100px;
+  height:auto;
+  margin-bottom:18px;
+
+  transition:all .4s ease;
+}
